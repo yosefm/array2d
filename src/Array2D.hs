@@ -1,5 +1,8 @@
 
-module Array2D where 
+module Array2D (
+  Extents, Coords, 
+  Arr2D, mkArr2D, nullArr2D, (@) )
+  where 
 
 data Extents = Ex Int Int deriving (Eq, Show)
 type Coords = (Int, Int)  -- row, col
@@ -20,3 +23,12 @@ flatIndex (Ex _ cols) (row, col) = row*cols + col
 
 (@) :: Arr2D a -> Coords -> a
 Arr2D e lst @ c = lst !! flatIndex e c
+
+-- assumes indices are within the length.
+-- indices in replacement list start at 0.
+flatMergeSorted :: [a] -> Int -> [(Int, a)] -> [a]
+flatMergeSorted [] _ _ = []
+flatMergeSorted lst _ [] = lst
+flatMergeSorted lst count ((at, what) : rest) = 
+  let (h, t) = splitAt (at - count) lst
+  in h ++ (what : flatMergeSorted (tail t) (at + 1) rest)
