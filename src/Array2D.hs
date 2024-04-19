@@ -43,11 +43,9 @@ ensureUnique lst =
   let srt = sortBy (compare `on` fst) lst
       def = snd . head
       cmpList = zip srt ((-1, def srt) : srt)
-      
-      folder :: (Repl a, Repl a) -> Maybe [Repl a] -> Maybe [Repl a]
-      folder _ Nothing = Nothing
-      folder (n1, n2) (Just acc)
+    
+  in go cmpList where 
+      go [] = Just []
+      go ((n1, n2) : rest)
         | fst n1 == fst n2 = Nothing
-        | otherwise        = Just (n1 : acc)
-  in
-    foldr folder (Just []) cmpList
+        | otherwise = (n1 :) <$> go rest
