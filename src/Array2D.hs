@@ -1,8 +1,11 @@
 
 module Array2D (
   Extents, Coords, 
-  Arr2D, mkArr2D, nullArr2D, (@) )
+  Arr2D, mkArr2D, nullArr2D, (@), ensureUnique )
   where 
+ 
+import Data.List (sortBy)
+import Data.Function (on)
 
 data Extents = Ex Int Int deriving (Eq, Show)
 type Coords = (Int, Int)  -- row, col
@@ -32,3 +35,19 @@ flatMergeSorted lst _ [] = lst
 flatMergeSorted lst count ((at, what) : rest) = 
   let (h, t) = splitAt (at - count) lst
   in h ++ (what : flatMergeSorted (tail t) (at + 1) rest)
+
+type Repl a = (Int, a)
+
+ensureUnique :: [Repl a] -> Maybe [Repl a]
+ensureUnique lst = 
+  let srt = sortBy (compare `on` fst) lst
+      def = snd . head
+      cmpList = zip srt ((-1, def srt) : srt)
+      
+      folder :: Maybe [Repl a] -> (Repl a, Repl a) -> Maybe [Repl a]
+      folder Nothing _ = Nothing
+      folder (Just acc) (n1, n2)
+        | fst n1 == fst n2 = Nothing
+        | otherwise        = Just (n1 : acc)
+  in
+    reverse <$> foldl folder (Just []) cmpList
