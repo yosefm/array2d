@@ -44,10 +44,10 @@ ensureUnique lst =
       def = snd . head
       cmpList = zip srt ((-1, def srt) : srt)
       
-      folder :: Maybe [Repl a] -> (Repl a, Repl a) -> Maybe [Repl a]
-      folder Nothing _ = Nothing
-      folder (Just acc) (n1, n2)
+      folder :: (Repl a, Repl a) -> Maybe [Repl a] -> Maybe [Repl a]
+      folder _ Nothing = Nothing
+      folder (n1, n2) (Just acc)
         | fst n1 == fst n2 = Nothing
         | otherwise        = Just (n1 : acc)
   in
-    reverse <$> foldl folder (Just []) cmpList
+    foldr folder (Just []) cmpList
