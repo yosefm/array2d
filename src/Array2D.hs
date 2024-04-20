@@ -1,7 +1,8 @@
 
 module Array2D (
-  Extents, Coords, 
-  Arr2D, mkArr2D, nullArr2D, (@), ensureUnique )
+  Extents (..), Coords, 
+  Arr2D, mkArr2D, nullArr2D, (@), ensureUnique,
+  merge)
   where 
  
 import Data.List (sortBy)
@@ -49,3 +50,12 @@ ensureUnique lst =
       go ((n1, n2) : rest)
         | fst n1 == fst n2 = Nothing
         | otherwise = (n1 :) <$> go rest
+
+type Repl2D a = (Coords, a)
+toRepl1D :: Extents -> Repl2D a -> Repl a
+toRepl1D e src = ((flatIndex e . fst) src, snd src)
+
+merge :: Arr2D a -> [Repl2D a] -> Maybe (Arr2D a)
+merge (Arr2D e lst) repls = 
+  let flatReps = ensureUnique $ map (toRepl1D e) repls
+  in (Arr2D e . flatMergeSorted lst 0) <$> flatReps
