@@ -1,7 +1,8 @@
 
 module Array2D (
   Extents (..), Coords, 
-  Arr2D, mkArr2D, nullArr2D, (@), ensureUnique,
+  Arr2D, mkArr2D, nullArr2D, 
+  (@), rows,
   merge)
   where 
  
@@ -27,6 +28,13 @@ flatIndex (Ex _ cols) (row, col) = row*cols + col
 
 (@) :: Arr2D a -> Coords -> a
 Arr2D e lst @ c = lst !! flatIndex e c
+
+rows :: Arr2D a -> [[a]]
+rows (Arr2D (Ex _ cols) lst) = go lst where 
+  go [] = []
+  go lst' =   
+    let (row, rest) = splitAt cols lst'
+    in row : go rest
 
 -- assumes indices are within the length.
 -- indices in replacement list start at 0.
