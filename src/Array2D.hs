@@ -2,7 +2,7 @@
 module Array2D (
   Extents (..), Coords, 
   Arr2D, mkArr2D, nullArr2D, 
-  (@), rows,
+  (@), rows, 
   merge)
   where 
  
@@ -50,14 +50,13 @@ type Repl a = (Int, a)
 ensureUnique :: [Repl a] -> Maybe [Repl a]
 ensureUnique lst = 
   let srt = sortBy (compare `on` fst) lst
-      def = snd . head
-      cmpList = zip srt ((-1, def srt) : srt)
-    
-  in go cmpList where 
-      go [] = Just []
-      go ((n1, n2) : rest)
+      dummyElem = (-1, snd $ head srt)
+      cmpList = zip srt (dummyElem : srt)
+      maybeUniqueElem (n1, n2)
         | fst n1 == fst n2 = Nothing
-        | otherwise = (n1 :) <$> go rest
+        | otherwise = Just n1
+    
+  in traverse maybeUniqueElem cmpList 
 
 type Repl2D a = (Coords, a)
 toRepl1D :: Extents -> Repl2D a -> Repl a
