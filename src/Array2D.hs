@@ -1,6 +1,6 @@
 
 module Array2D (
-  Extents (..), Coords, flatIndex, numElems, inBounds,
+  Extents (..), Coords, flatIndex, fatIndex, numElems, inBounds,
   Arr2D, mkArr2D, nullArr2D, 
   (@), asRows, 
   merge)
@@ -34,6 +34,9 @@ nullArr2D = Arr2D (Ex 0 0) []
 
 flatIndex :: Extents -> Coords -> Int
 flatIndex (Ex _ cols) (row, col) = row*cols + col
+
+fatIndex :: Extents -> Int -> Coords
+fatIndex (Ex _ cols) flat = divMod flat cols
 
 (@) :: Arr2D a -> Coords -> a
 Arr2D e lst @ c = lst !! flatIndex e c
