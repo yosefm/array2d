@@ -1,8 +1,8 @@
 
 module Array2D (
-  Extents (..), Coords, 
+  Extents (..), Coords, flatIndex, numElems, inBounds,
   Arr2D, mkArr2D, nullArr2D, 
-  (@), rows, 
+  (@), asRows, 
   merge)
   where 
  
@@ -10,6 +10,15 @@ import Data.List (sortBy)
 import Data.Function (on)
 
 data Extents = Ex Int Int deriving (Eq, Show)
+
+numElems :: Extents -> Int
+numElems (Ex rows cols) = rows*cols
+
+inBounds :: Extents -> Coords -> Bool
+inBounds (Ex rows cols) = (&&) 
+  <$> ((&&) <$> (>= 0) <*> (< rows)) . fst 
+  <*> ((&&) <$> (>= 0) <*> (< cols)) . snd
+
 type Coords = (Int, Int)  -- row, col
 
 data Arr2D a = Arr2D  Extents [a]  deriving Show
@@ -29,8 +38,8 @@ flatIndex (Ex _ cols) (row, col) = row*cols + col
 (@) :: Arr2D a -> Coords -> a
 Arr2D e lst @ c = lst !! flatIndex e c
 
-rows :: Arr2D a -> [[a]]
-rows (Arr2D (Ex _ cols) lst) = go lst where 
+asRows :: Arr2D a -> [[a]]
+asRows (Arr2D (Ex _ cols) lst) = go lst where 
   go [] = []
   go lst' =   
     let (row, rest) = splitAt cols lst'
