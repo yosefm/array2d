@@ -9,9 +9,6 @@ module Array2D (
 import qualified Data.Vector as V
 import Data.Vector ((//), (!))
 
-import Data.List (sortBy)
-import Data.Function (on)
-
 data Extents = Ex Int Int deriving (Eq, Show)
 
 numElems :: Extents -> Int
