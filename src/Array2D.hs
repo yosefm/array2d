@@ -1,7 +1,7 @@
 
 module Array2D (
   Extents (..), Coords, flatIndex, fatIndex, numElems, inBounds,
-  Arr2D, mkArr2D, nullArr2D, 
+  Arr2D(arrShape, arrData), mkArr2D, nullArr2D, 
   (@), asRows, 
   merge)
   where 
@@ -21,7 +21,10 @@ inBounds (Ex rows cols) = (&&)
 
 type Coords = (Int, Int)  -- row, col
 
-data Arr2D a = Arr2D  Extents (V.Vector a)  deriving Show
+data Arr2D a = Arr2D {
+    arrShape :: Extents
+  , arrData :: V.Vector a
+  } deriving Show
 
 mkArr2D :: Extents -> [a] -> Maybe (Arr2D a)
 mkArr2D e@(Ex rows cols) lst  
