@@ -101,5 +101,5 @@ test-suite array2d-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.17.2.0,
+        base >=4.17.2.0,
         array2d
