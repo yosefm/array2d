@@ -8,6 +8,7 @@ module Array2D (
 
 import qualified Data.Vector as V
 import Data.Vector ((//), (!))
+import Data.Bifunctor (first)
 
 data Extents = Ex Int Int deriving (Eq, Show)
 
@@ -45,14 +46,14 @@ fatIndex (Ex _ cols) flat = divMod flat cols
 Arr2D e v @ c = v ! flatIndex e c
 
 asRows :: Arr2D a -> [V.Vector a]
-asRows (Arr2D e@(Ex rows cols) v) = map (\n -> getRow n) [0..rows - 1]
+asRows (Arr2D e@(Ex rows cols) v) = map getRow [0..rows - 1]
   where getRow n = V.slice (flatIndex e (n,0)) cols v
 
 type Repl a = (Int, a)
 type Repl2D a = (Coords, a)
 
 toRepl1D :: Extents -> Repl2D a -> Repl a
-toRepl1D e src = ((flatIndex e . fst) src, snd src)
+toRepl1D e = first $ flatIndex e
 
 merge :: Arr2D a -> [Repl2D a] -> Maybe (Arr2D a)
 merge (Arr2D e v) repls = 
